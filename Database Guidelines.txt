@@ -1,0 +1,106 @@
+Database Sketch
+==============================================================================
+GENERAL
+==============================================================================
+
+User
+	-Register
+		+Userid
+		+Password
+		+Type
+			-If student - University
+		
+	-Login
+		+Checks if login info is correct
+		
+	-Can view
+		+Based on type of user scope
+		+
+		
+Super Admin
+	-Create University
+		+Inserts into University entity and consolidates created_by_U relationship
+	-Approve non-RSO events
+	
+Student
+	-With 5 other student can create an RSO
+		+Check if all conditions are met and creates
+			-New admin
+			-New RSO
+			-New members of RSO
+	-Comment
+		-Specified Event and text
+		-Timestamp, userid, event name primary key
+			+multiple comments on same event
+		-Edit comments
+			+retrieve comments based on specified event and then allow specific changes
+	-Rate an event	
+		
+Admin
+	-Has to be affiliated with one University
+	-Can own an RSO
+		+Should be consolidated during creation of RSO gui
+	-Can create events
+	-Approve RSO event	
+	
+Events
+	-Can be seen based on event type
+		+private - university(of creator admin)
+		+public - everyone
+		+RSO - members
+		
+RSO
+	-Has members and owner
+	
+==============================================================================
+GUI IMPLEMENTATION
+==============================================================================
+
+-Home
+	+Registration
+	+Login
+		
+-Dependent on Scope
+	=ALL
+	+View Events
+	
+	=Super Admin
+	+Create University
+	+Add Locations
+	
+	=Admin
+	+Create Event
+	
+	=Student
+	+Create RSO
+	+Join RSO
+	+Comment
+	+Rate
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
