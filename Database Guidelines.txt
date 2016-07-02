@@ -165,38 +165,34 @@ SeeEvents SQL Statement
 
 SELECT SQL STATEMENT TO SeeEvents
 
-variables/parameters:
-user.uid #user's id
-user.uni_name #user's associated university
+// Current session user's id and university name
+$user_id = $_SESSION['userid'];
+$user_university = $_SESSION['uni_name'];
 
+$query = "
+	#Private Events
+	SELECT *
+	FROM Events E
+	WHERE E.type = 'Private'
+		AND E.created_by_E IN 	(SELECT A.userid
+								FROM Admins A
+								WHERE A.uni_name = '$user_university')
+	UNION
 
-//	Maybe make this SELECT statement within a function
-//	So we can pass user's parameters like uid and uni_name
-//	
+	#Public Events
+	SELECT *
+	FROM Events E
+	WHERE E.type = 'Public'
 
-#Private Events
-SELECT *
-FROM Events E
-WHERE E.type = 'Private'
-	AND E.created_by_E IN (SELECT A.userid
-							FROM Admins A
-							WHERE A.uni_name = '$user_university')
-UNION
+	UNION
 
-#Public Events
-SELECT *
-FROM Events E
-WHERE E.type = 'Public'
-
-UNION
-
-#RSO Events
-SELECT *
-FROM Events E
-WHERE E.type = 'RSO'
-	AND EXISTS (SELECT *
-				FROM Member M, RSO R
-				WHERE $[user.userid] = M.userid
-					AND M.rname = R.rname 
-					AND R.uid = E.created_by_E)
-	
+	#RSO Events
+	SELECT *
+	FROM Events E
+	WHERE E.type = 'RSO'
+		AND EXISTS (SELECT *
+					FROM Member M, RSO R
+					WHERE $user_id = M.userid
+						AND M.rname = R.rname 
+						AND R.uid = E.created_by_E)
+";
