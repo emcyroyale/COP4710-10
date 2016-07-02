@@ -77,30 +77,126 @@ GUI IMPLEMENTATION
 	+Comment
 	+Rate
 	
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+======================================================
+DB Tables 
+======================================================
+
+CREATE TABLE User (
+	userid		CHAR(20),
+	password	CHAR(20),
+	access_type	CHAR(20),
+	email		CHAR(50),
+	PRIMARY KEY	(userid))
+
+CREATE TABLE Student (
+	student_id	CHAR(20),
+	userid		CHAR(20) NOT NULL,
+	email		CHAR(50), 
+	uni_name	CHAR(50) NOT NULL,
+	PRIMARY KEY	(student_id),
+	FOREIGN KEY (userid, email) REFERENCES User
+		ON DELETE CASCASDE)
+	FOREIGN KEY (uni_name) REFERENCES University
+		ON DELETE CASCADE)
+
+CREATE TABLE Admin (
+	admin_id	CHAR(20),
+	userid 		CHAR(20) NOT NULL,
+	email		CHAR(50),
+	uni_name	CHAR(50) NOT NULL,
+	PRIMARY KEY (admin_id)
+	FOREIGN KEY (userid, email) REFERENCES User
+		ON DELETE CASCADE)
+	FOREIGN KEY (uni_name) REFERENCES University
+		ON DELETE CASCADE)
+
+CREATE TABLE SuperAdmin (
+	superAdmin_id	CHAR(20),
+	userid			CHAR(20) NOT NULL,
+	email			CHAR(50),
+	PRIMARY KEY (superAdmin_id)
+	FOREIGN KEY (userid, email) REFERENCES User
+		ON DELETE CASCADE)
+
+CREATE TABLE University (
+	uni_name		CHAR(20),
+	location 		CHAR(20),
+	description		VARCHAR(150),
+	no_students		INTEGER,
+	superAdmin_id	CHAR(20) NOT NULL,
+	PRIMARY KEY (uni_name)
+	FOREIGN KEY (superAdmin_id) REFERENCES SuperAdmin
+)
+
+CREATE TABLE RSO (
+	rso_name	CHAR(30),
+	admin_id 	CHAR(20) NOT NULL,
+	PRIMARY KEY (rso_name)
+	FORIEGN KEY (admin_id) REFERENCES Admin
+		ON DELETE CASCADE
+)
+
+
+CREATE TABLE Events (
+	time 		TIME, //Or INTEGER; Hourly basis? (suggested in handout)
+	date 		DATE,
+	loc_name	CHAR(20) NOT NULL,
+	event_type	CHAR(20),
+	description	CHAR(150),
+	phone_no	INTEGER, 
+	email		CHAR(50),
+	admin_id 	CHAR(20) NOT NULL,
+	PRIMARY KEY (time, loc_name)
+	FORIGN KEY (loc_name) REFERENCES Location
+	FORIENG KEY (email, admin_id) REFERENCES Admin
+)
+
+CREATE TABLE Location (
+	loc_name	CHAR(20),
+	longitude	CHAR(50),
+	latitude	CHAR(50),
+	PRIMARY KEY (loc_name)
+)
+
+
+======================================================
+SeeEvents SQL Statement
+======================================================
+
+SELECT SQL STATEMENT TO SeeEvents
+
+variables/parameters:
+user.uid #user's id
+user.uni_name #user's associated university
+
+
+//	Maybe make this SELECT statement within a function
+//	So we can pass user's parameters like uid and uni_name
+//	
+
+#Private Events
+SELECT *
+FROM Events E
+WHERE E.type = 'Private'
+	AND E.created_by_E IN (SELECT A.userid
+							FROM Admins A
+							WHERE A.uni_name = '$user_university')
+UNION
+
+#Public Events
+SELECT *
+FROM Events E
+WHERE E.type = 'Public'
+
+UNION
+
+#RSO Events
+SELECT *
+FROM Events E
+WHERE E.type = 'RSO'
+	AND EXISTS (SELECT *
+				FROM Member M, RSO R
+				WHERE $[user.userid] = M.userid
+					AND M.rname = R.rname 
+					AND R.uid = E.created_by_E)
+	
