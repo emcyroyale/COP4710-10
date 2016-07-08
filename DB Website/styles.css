@@ -1,0 +1,20 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:800,300);
+body {
+	background-color: lightblue;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: normal;
+	margin: 10px 20px 0;
+}
+a {
+	font-weight: 600;
+}
+.left {
+	width: 5%;
+	float: left;
+	text-align: left;
+}
+.right {
+	width: 90%;
+	float: left;
+	margin-left: 10px;
+}
