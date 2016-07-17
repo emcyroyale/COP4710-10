@@ -1,0 +1,46 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="description" content="Creates a new Event">
+		<link rel="s tylesheet" href="styles.css">
+			
+	</head>
+	
+	<body>
+		<h1> CREATE EVENT </h1>
+		<form action=CREATEEVENT.php method="post">
+			<b class="left" >Name </b>
+			<input class="right" type="text" name="usernameTXT" size=20></input><br />
+			<b class="left" >Date </b>
+			<input class="right" type="date" name="dateSELECT"></input><br />
+			<b class="left" >Time </b>
+			<input class="right" type="time" name="timeSELECT"></input><br />
+			<b class="left" >Phone </b>
+			<input class="right" type="text" name="phoneTXT" size=20></input><br /><br />
+			<b class="left" >Email </b>
+			<input class="right" type="text" name="emailTXT" size=20></input><br /><br />
+			<b class="left" >Description </b>
+			<textarea class="right" col= 200 row=10 name="descTXTAREA"></textarea><br />
+			<b class="left" >Type </b>
+			<select class="right"name="typeSELECT">
+				<option value="option1"> Public </option>
+				<option value="option2"> Private </option>
+				<option value="option3"> Registered Student Organization </option>
+			</select><br /><br />
+			<b class="left" >Category </b>
+			<select class="right"name="categorySELECT">
+				<option value="option1"> phpPLACEHOLDER1 </option>
+				<option value="option2"> phpPLACEHOLDER2 </option>
+				<option value="option3"> phpPLACEHOLDER3 </option>
+			</select><br /><br />
+			<b class="left" >Location </b>
+			<select class="right"name="locationSELECT">
+				<option value="option1"> phpPLACEHOLDER1 </option>
+				<option value="option2"> phpPLACEHOLDER2 </option>
+				<option value="option3"> phpPLACEHOLDER3 </option>
+			</select><br />
+			<input type="submit" value="Create"></input><br />
+		</form>
+	</body>
+	
+</html>
