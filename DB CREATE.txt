@@ -7,10 +7,12 @@ CREATE TABLE `users` (
   `user_type` enum(''s'',''a'',''sa'') NOT NULL,
   PRIMARY KEY (`userid`)
 )
+
+INSERT INTO `users` VALUES ('u2','p2','a'),('user1','password1','sa');
    
 ___________________________________________________
 CREATE TABLE `university` (
-  `name` varchar(24) NOT NULL,
+  `name` varchar(60) NOT NULL,
   `location` varchar(45) DEFAULT NULL,
   `description` varchar(45) DEFAULT NULL,
   `no_students` int(11) DEFAULT NULL,
@@ -36,14 +38,16 @@ BEGIN
     set user_type = 'sa'
     where userid = NEW.sadmin_id;
 END
+
+INSERT INTO `super_admin` VALUES ('user1');
 ___________________________________________________
 'CREATE TABLE `student` (
   `student_id` varchar(24) NOT NULL,
-  `university` varchar(45) NOT NULL,
+  `university` int(15) NOT NULL,
   PRIMARY KEY (`student_id`),
   KEY `part_ofU_idx` (`university`),
-  CONSTRAINT `Sid` FOREIGN KEY (`student_id`) REFERENCES `users` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Uni_S` FOREIGN KEY (`university`) REFERENCES `university` (`name`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `S_Uni` FOREIGN KEY (`university`) REFERENCES `university` (`university_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Sid` FOREIGN KEY (`student_id`) REFERENCES `users` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 )
 
 CREATE DEFINER=`root`@`localhost` TRIGGER update_user_type_S BEFORE INSERT ON `student` 
@@ -60,8 +64,8 @@ CREATE TABLE `admin` (
   `university` varchar(45) NOT NULL,
   PRIMARY KEY (`admin_id`),
   KEY `Uni_A_idx` (`university`),
-  CONSTRAINT `Aid` FOREIGN KEY (`admin_id`) REFERENCES `users` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Uni_A` FOREIGN KEY (`university`) REFERENCES `university` (`name`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `A_Uni` FOREIGN KEY (`university`) REFERENCES `university` (`university_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Aid` FOREIGN KEY (`admin_id`) REFERENCES `users` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 )
 
 CREATE DEFINER=`root`@`localhost` TRIGGER update_user_type_a BEFORE INSERT ON `admin` 
@@ -71,6 +75,9 @@ BEGIN
     set user_type = 'a'
     where userid = NEW.admin_id;
 END
+
+
+INSERT INTO `admin` VALUES ('u2',1);
 ___________________________________________________
 CREATE TABLE `rso` (
   `name` varchar(24) NOT NULL,
