@@ -1,13 +1,31 @@
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:800,300);
+/*@import url(http://fonts.googleapis.com/css?family=Open+Sans:800,300);*/
 
 body {
-	background-color: lightblue;
+	background-color: #5ea2e6;
 	color: #1b4275;
 	font-family: 'Open Sans', sans-serif;
 	font-weight: normal;
 	margin: 30px 30px 0;
+}
+
+.left {
+	width: 13%;
+	float: left;
+	text-align: right;
+}
+.right {
+	width: 25%;
+	float: left;
+	margin-left: 5px;
+}
+
+.error {
+	color: #FF0000;
+}
+body {
 	padding-top: 40px;
 	padding-bottom: 40px;
+	background-color: #7e9ead;
 }
 
 .form-signin {
@@ -27,11 +45,12 @@ body {
 	font-weight: normal;
 }
 
-.error {
+.form-signin-error {
 	max-width: 100%;
 	padding: 10px;
 	margin: 0 auto;
 	font-size: medium;
+	font-weight: bold;
 	color: #FF0000;
 }
 .form-signin-success {
@@ -39,7 +58,8 @@ body {
 	padding: 10px;
 	margin: 0 auto;
 	font-size: medium;
-	color: #a03aff;
+	font-weight: bold;
+	color: #008000;
 }
 
 .form-signin .form-control {
@@ -70,70 +90,51 @@ body {
 	border-color:#017572;
 }
 
-h2{
-	text-align: center;
-	color: #1b4275;
-}
-
-a {
-	font-weight: 600;
-}
-.left {
-	width: 13%;
-	float: left;
-	text-align: right;
-}
-.right {
-	width: 25%;
-	float: left;
-	margin-left: 5px;
-}
-
 .flex-container {
-	display: -webkit-flex;
-	display: flex;
-	-webkit-flex-flow: row wrap;
-	flex-flow: row wrap;
-	text-align: center;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    text-align: center;
 }
 
 .flex-container > * {
-	padding: 15px;
-	-webkit-flex: 1 100%;
-	flex: 1 100%;
+    padding: 10px;
+    -webkit-flex: 1 100%;
+    flex: 1 100%;
 }
 
 .article {
-	text-align: left;
+    text-align: left;
 }
 
 
 .nav ul {
-	list-style-type: none;
+    list-style-type: none;
 	padding: 0;
 }
-
+   
 .nav ul a {
-	text-decoration: none;
+ text-decoration: none;
 }
 
 @media all and (min-width: 768px) {
-	.nav {text-align:left;-webkit-flex: 1 auto;flex:1 auto;-webkit-order:1;order:1;}
-	.article {-webkit-flex:5 0px;flex:5 0px;-webkit-order:2;order:2;}
-	footer {-webkit-order:3;order:3;}
+    .nav {text-align:left;-webkit-flex: 1 auto;flex:1 auto;-webkit-order:1;order:1;}
+    .article {-webkit-flex:5 0px;flex:5 0px;-webkit-order:2;order:2;}
+    footer {-webkit-order:3;order:3;}
 }
 
 tr:nth-child(even) {background-color: #5491cf}
 tr:nth-child(odd) {background-color: #38618a}
 
 .tblHead {
-	background-color: #2f5173;
-	color: white;
+    background-color: #2f5173;
+    color: white;
 }
 
 th, td {
-	padding: 15px;
-	text-align: left;
+    padding: 15px;
+    text-align: left;
 }
 
 h2{
