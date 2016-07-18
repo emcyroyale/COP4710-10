@@ -37,9 +37,15 @@ CREATE TABLE `event` (
   `App_by_A` int(11) DEFAULT NULL,
   `App_by_SA` int(11) DEFAULT NULL,
   `created_by` varchar(24) NOT NULL,
+  `university_id` int(15) DEFAULT NULL,
+  `rso_id` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`name`),
   KEY `created_by_eventA_idx` (`created_by`),
-  CONSTRAINT `created_by_eventA` FOREIGN KEY (`created_by`) REFERENCES `admin` (`admin_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `university_key_idx` (`university_id`),
+  KEY `rso_key_idx` (`rso_id`),
+  CONSTRAINT `created_by_eventA` FOREIGN KEY (`created_by`) REFERENCES `admin` (`admin_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `rso_key` FOREIGN KEY (`rso_id`) REFERENCES `rso` (`name`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `university_key` FOREIGN KEY (`university_id`) REFERENCES `university` (`university_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -49,7 +55,7 @@ CREATE TABLE `event` (
 
 LOCK TABLES `event` WRITE;
 /*!40000 ALTER TABLE `event` DISABLE KEYS */;
-INSERT INTO `event` VALUES ('e1','7/1/2016','entertainment',NULL,'desc1',NULL,NULL,NULL,NULL,NULL,NULL,'u2');
+INSERT INTO `event` VALUES ('e1showNoType','7/1/2016','entertainment',NULL,'desc1',NULL,NULL,NULL,NULL,NULL,NULL,'u2',NULL,NULL),('e2',NULL,NULL,NULL,NULL,NULL,NULL,'Private',NULL,NULL,NULL,'u2',NULL,NULL),('e3',NULL,NULL,NULL,NULL,NULL,NULL,'Private',NULL,NULL,1,'u2',NULL,NULL),('e4show',NULL,NULL,NULL,NULL,NULL,NULL,'Private',NULL,NULL,1,'u2',1,NULL),('e5',NULL,NULL,NULL,NULL,NULL,NULL,'Public',NULL,NULL,NULL,'u2',NULL,NULL),('e6show',NULL,NULL,NULL,NULL,NULL,NULL,'Public',NULL,NULL,1,'u2',NULL,NULL),('e7',NULL,NULL,NULL,NULL,NULL,NULL,'RSO',NULL,NULL,NULL,'u2',NULL,NULL),('e8showifmem',NULL,NULL,NULL,NULL,NULL,NULL,'RSO',NULL,NULL,NULL,'u2',NULL,'rso1');
 /*!40000 ALTER TABLE `event` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -62,4 +68,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-17 15:54:52
+-- Dump completed on 2016-07-18 13:16:46

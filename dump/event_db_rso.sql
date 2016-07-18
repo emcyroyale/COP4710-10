@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `rso`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rso` (
-  `name` varchar(24) NOT NULL,
+  `name` varchar(45) NOT NULL,
   `owned_by` varchar(24) NOT NULL,
   PRIMARY KEY (`name`),
   KEY `owned_by_idx` (`owned_by`),
@@ -39,6 +39,7 @@ CREATE TABLE `rso` (
 
 LOCK TABLES `rso` WRITE;
 /*!40000 ALTER TABLE `rso` DISABLE KEYS */;
+INSERT INTO `rso` VALUES ('rso1','u2');
 /*!40000 ALTER TABLE `rso` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-17 15:54:51
+-- Dump completed on 2016-07-18 13:16:45
