@@ -8,9 +8,9 @@
 	$uri .= $_SERVER['HTTP_HOST'];
 	$uri .= '/CollegeEvents';
 
-	if (session_status() == PHP_SESSION_NONE) {
-		header($uri.'/login.php');
+	if (session_status() == PHP_SESSION_ACTIVE) {
+		header($uri.'/logout.php');
 	} else {
-		header($uri . '/home.php');
+		header($uri . '/login.php');
 	}
 ?>
