@@ -24,7 +24,7 @@
         <!-- Process POST data in this HTML page -->
         <?php
         //HTML tags for error messages
-        $err = "<h4 class=\"error\">";
+        $err = "<h4 class=\"form-signin-error\">";
         $end = "</h4>";
         // define variables and set to empty values
         $success = $usernameErr = $passwordErr = "";
@@ -66,10 +66,10 @@
 
                 $query = "SELECT * FROM users WHERE userid = '$username' AND password = '$password'";
                 $check_user = mysqli_query($database, $query);
-
+				
                 // USER SUCCESS, START SESSION
                 if(mysqli_num_rows($check_user)>= 1){
-                    $row = mysqli_fetch_assoc($check_user);
+					$row = mysqli_fetch_assoc($check_user);
                     $success = $err."SUCCESS!".$end;
                     $_SESSION['valid'] = true;
                     $_SESSION['timeout'] = time();
@@ -102,7 +102,7 @@
     <!-- Login Form -->
     <div class = "container">
         <!-- Title -->
-        <h2>UNIVERSITY EVENT<p>LOGIN</h2>
+        <h2>UCF EVENT LOGIN</h2>
         <form class = "form-signin" role = "form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             <?php echo $success ?>
             
@@ -117,11 +117,12 @@
                    required value="<?php echo $password;?>"></br>
 
             <!-- Submit Button -->
-            <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "login">Log In</button>
+            <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "login">Login</button>
         </form>
 
         <!-- Registration Link -->
         <form class="form-signin" role="form" action="register.php">
+            <h2 class="form-sigin-heading">Register:</h2>
             <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "register">Register</button>
         </form>
     </div>
