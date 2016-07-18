@@ -24,7 +24,7 @@
         <!-- Process POST data in this HTML page -->
         <?php
         //HTML tags for error messages
-        $err = "<h4 class=\"form-signin-error\">";
+        $err = "<h4 class=\"error\">";
         $end = "</h4>";
         // define variables and set to empty values
         $success = $usernameErr = $passwordErr = "";
@@ -64,21 +64,23 @@
             if (empty($missing_data)) {
                 require_once('connect.php');
 
-                $query = "SELECT userid, email FROM users WHERE userid = '$username' AND password = '$password'";
+                $query = "SELECT * FROM users WHERE userid = '$username' AND password = '$password'";
                 $check_user = mysqli_query($database, $query);
 
                 // USER SUCCESS, START SESSION
                 if(mysqli_num_rows($check_user)>= 1){
+                    $row = mysqli_fetch_assoc($check_user);
                     $success = $err."SUCCESS!".$end;
                     $_SESSION['valid'] = true;
                     $_SESSION['timeout'] = time();
                     $_SESSION['username'] = $username;
                     $_SESSION['password'] = $password;
-                    //$_SESSION['email'] = $email;
+                    $_SESSION['email'] = $row['email'];
+                    $_SESSION['user_type'] = $row['user_type'];
 
                     mysqli_close($database);
                     require_once('index.php');
-                    header($uri.'/home.php');
+                    header($uri.'/dashboard.php');
                 } else {
                     $success = $err."Username/Password is incorrect".$end;
                     mysqli_close($database);

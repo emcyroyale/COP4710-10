@@ -21,13 +21,29 @@
         <?php
 
             //HTML tags for error messages
-            $err = "<h4 class=\"form-signin-error\">";
+            $err = "<h4 class=\"error\">";
+            $suc = "<h4 class=\"form-signin-success\">";
             $end = "</h4>";
-            // define variables and set to empty values
-            $success = $usernameErr = $passwordErr = $passwordErr2 = $emailErr = "";
-            $username = $password = $password2 = $email = "";
+
+        // define variables and set to empty values
+            $success = $usernameErr = $passwordErr = $passwordErr2 = $emailErr = $universityErr = "";
+            $username = $password = $password2 = $email = $test = $university = "";
 
             $missing_data = array();
+
+            // Check Universities
+            $name = [];
+            $ids = [];
+            require_once('connect.php');
+            $queryDB = "SELECT * FROM university";
+            $result = mysqli_query($database, $queryDB);
+            $test = mysqli_num_rows($result);
+            if(mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+                    array_push($ids, $row['university_id']);
+                    array_push($name, $row['name']);
+                }
+            }
 
             // Check for each required input data that has been POSTed through Request Method
             if ($_SERVER["REQUEST_METHOD"] == "POST")
@@ -82,27 +98,37 @@
                     }
                 }
 
+                if (empty($_POST["universitySel"]))
+                {
+                    $missing_data[] = "university";
+                    $universityErr = $err."University is required".$end;
+                } else {
+                    $university = trim_input($_POST["universitySel"]);
+                }
+
                 // If no data is missing and it's been validated
                 // ADD NEW USER TO DATABASE
                 if (empty($missing_data)) {
                     require_once('connect.php');
 
-                    $query = "INSERT INTO users (userid, password, email) VALUES (?, ?, ?)";
+                    // Add New User
+                    $query = "INSERT INTO users (userid, password, email, user_type) VALUES (?, ?, ?, 's')";
                     $stmt = mysqli_prepare($database, $query);
 
                     mysqli_stmt_bind_param($stmt, "sss", $username, $password, $email);
                     mysqli_stmt_execute($stmt);
 
-                    $query = "INSERT INTO student (student_id, university) VALUES (?, NULL)";
+                    //  Add New Student
+                    $query = "INSERT INTO student (student_id, university) VALUES (?, ?)";
                     $stmt2 = mysqli_prepare($database, $query);
-                    mysqli_stmt_bind_param($stmt2, "s", $student_id);
+                    mysqli_stmt_bind_param($stmt2, "si", $username, $university);
                     mysqli_stmt_execute($stmt2);
 
                     $affected_rows = mysqli_stmt_affected_rows($stmt);
                     if ($affected_rows == 1) {
                         mysqli_stmt_close($stmt);
                         mysqli_close($database);
-                        $success = $err."SUCCESS!".$end;;
+                        $success = $suc."User has been created".$end;;
                         require_once('index.php');
                         header($uri.'/registered.html');
 
@@ -128,15 +154,14 @@
     <!-- Registration Form -->
     <div class="container">
         <!-- Title -->
-        <h2>UNIVERSITY EVENT <p> REGISTRATION</h2>
+        <h2>UNIVERSITY EVENT<p>REGISTRATION</h2>
         <form class="form-signin" role="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             <?php echo $success; ?>
 
             <!-- Username -->
             <?php echo $usernameErr ?>
             <input class="form-control" type="text" name="username" placeholder="Username"
-                   required autofocus value="<?php echo $username;?>">
-            <br>
+                   required autofocus value="<?php echo $username;?>"></br>
 
             <!-- Password -->
             <?php echo $passwordErr ?>
@@ -152,6 +177,16 @@
             <?php echo $emailErr ?>
             <input class="form-control" type="email" name="email" placeholder="Email"
                    required value="<?php echo $email;?>"></br>
+
+            <!-- University -->
+            <?php echo $universityErr ?>
+            <select class="form-control" name="universitySel">
+                <?php
+                for($x = 0; $x <= count($ids); $x++){
+                    echo "<option value=" . $ids[$x] . ">" . $name[$x]  . "</option>";
+                }
+                ?>
+            </select><br /><br />
 
             <!-- Submit Button -->
             <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "login">Register</button>

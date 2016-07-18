@@ -1,4 +1,7 @@
 <?php
+	ob_start();
+	session_start();
+
 	$uri = 'Location: ';
 	if (!empty($_SERVER['HTTPS']) && ('on' == $_SERVER['HTTPS'])) {
 		$uri .= 'https://';
@@ -8,9 +11,9 @@
 	$uri .= $_SERVER['HTTP_HOST'];
 	$uri .= '/CollegeEvents';
 
-	if (session_status() == PHP_SESSION_NONE) {
+	if(!isset($_SESSION["username"])){
 		header($uri.'/login.php');
 	} else {
-		header($uri . '/home.php');
+		header($uri . '/dashboard.php');
 	}
 ?>

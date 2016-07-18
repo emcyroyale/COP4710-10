@@ -11,7 +11,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="College Events Super-Admin Registration">
+    <meta name="description" content="College Events Registration">
     <link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
@@ -21,13 +21,16 @@
         <?php
 
             //HTML tags for error messages
-            $err = "<h4 class=\"form-signin-error\">";
+            $err = "<h4 class=\"error\">";
+            $suc = "<h4 class=\"form-signin-success\">";
             $end = "</h4>";
-            // define variables and set to empty values
-            $success = $usernameErr = $passwordErr = $passwordErr2 = $emailErr = "";
-            $username = $password = $password2 = $email = "";
+
+        // define variables and set to empty values
+            $success = $usernameErr = $passwordErr = $passwordErr2 = $emailErr =  "";
+            $username = $password = $password2 = $email = $test = "";
 
             $missing_data = array();
+
 
             // Check for each required input data that has been POSTed through Request Method
             if ($_SERVER["REQUEST_METHOD"] == "POST")
@@ -87,27 +90,29 @@
                 if (empty($missing_data)) {
                     require_once('connect.php');
 
-                    $query = "INSERT INTO users (userid, password, email) VALUES (?, ?, ?)";
-                    $stmt = mysqli_prepare($database, $query);
+                        //  Add New User
+                        $query = "INSERT INTO users (userid, password, email, user_type) VALUES (?, ?, ?, 'sa')";
+                        $stmt = mysqli_prepare($database, $query);
 
-                    mysqli_stmt_bind_param($stmt, "sss", $username, $password, $email);
-                    mysqli_stmt_execute($stmt);
+                        mysqli_stmt_bind_param($stmt, "sss", $username, $password, $email);
+                        mysqli_stmt_execute($stmt);
 
-                    $query = "INSERT INTO super_admin (sadmin_id, university) VALUES (?, NULL)";
-                    $stmt2 = mysqli_prepare($database, $query);
-                    mysqli_stmt_bind_param($stmt2, "s", $sadmin_id);
-                    mysqli_stmt_execute($stmt2);
+                        // Add Super Admin
+                        $query = "INSERT INTO super_admin (sadmin_id) VALUES (?)";
+                        $stmt3 = mysqli_prepare($database, $query);
+                        mysqli_stmt_bind_param($stmt3, "s", $username);
+                        mysqli_stmt_execute($stmt3);
 
-                    $affected_rows = mysqli_stmt_affected_rows($stmt);
-                    if ($affected_rows == 1) {
-                        mysqli_stmt_close($stmt);
-                        mysqli_close($database);
-                        $success = $err."SUCCESS!".$end;;
+                        $affected_rows = mysqli_stmt_affected_rows($stmt);
+                        if ($affected_rows == 1) {
+                            mysqli_stmt_close($stmt);
+                            mysqli_close($database);
+                            $success = $suc."User has been created".$end;;
                         require_once('index.php');
                         header($uri.'/registered.html');
 
                     } else {
-                        $success = $err."Super Admin already exists".$end;
+                        $success = $err."Username already exists".$end;
                         mysqli_stmt_close($stmt);
                         mysqli_close($database);
                     }
@@ -128,15 +133,14 @@
     <!-- Registration Form -->
     <div class="container">
         <!-- Title -->
-        <h2>SUPER ADMIN REGISTRATION</h2>
+        <h2>UNIVERSITY EVENT<p>REGISTRATION</h2>
         <form class="form-signin" role="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             <?php echo $success; ?>
 
             <!-- Username -->
             <?php echo $usernameErr ?>
             <input class="form-control" type="text" name="username" placeholder="Username"
-                   required autofocus value="<?php echo $username;?>">
-            <br>
+                   required autofocus value="<?php echo $username;?>"></br>
 
             <!-- Password -->
             <?php echo $passwordErr ?>
@@ -159,7 +163,6 @@
 
         <!-- Login Link -->
         <form class="form-signin" role="form" action="logout.php">
-            <h2 class="form-sigin-heading">Log In:</h2>
             <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "register">Log In</button>
         </form>
     </div>
