@@ -22,13 +22,27 @@
 
             //HTML tags for error messages
             $err = "<h4 class=\"form-signin-error\">";
+			$suc = "<h4 class=\"form-signin-success\">";
             $end = "</h4>";
             // define variables and set to empty values
-            $success = $usernameErr = $passwordErr = $passwordErr2 = $emailErr = "";
-            $username = $password = $password2 = $email = "";
-
+            $success = $usernameErr = $passwordErr = $passwordErr2 = $emailErr = $universityErr = "";
+            $username = $password = $password2 = $email = $test = $university = "";
+			$name = [];
+			$ids = [];
             $missing_data = array();
 
+			//Populates dropdown
+			require_once('connect.php');
+				$queryDB = "SELECT * FROM university";
+					$result = mysqli_query($database, $queryDB);
+					$test = mysqli_num_rows($result);
+					if(mysqli_num_rows($result) > 0){
+							while($row = mysqli_fetch_assoc($result)){
+								array_push($ids,$row['university_id']);
+								array_push($name,$row['name']);
+							}
+					}
+			
             // Check for each required input data that has been POSTed through Request Method
             if ($_SERVER["REQUEST_METHOD"] == "POST")
             {
@@ -81,30 +95,55 @@
                         $emailErr = $err."Invalid email format".$end;
                     }
                 }
-
+				
+				if (empty($_POST["universitySel"]))
+                {
+                    $missing_data[] = "university";
+                    $universityErr = $err."University is required".$end;
+                } else {
+                    $university = trim_input($_POST["universitySel"]);
+				}
+				
+				//Check Box Super Admin
+				if(isset($_POST['saCheck']))
+				{
+					$sAdminCheck = true;
+				}
+				else
+				{
+					$sAdminCheck = false;
+				}
+					
                 // If no data is missing and it's been validated
                 // ADD NEW USER TO DATABASE
                 if (empty($missing_data)) {
                     require_once('connect.php');
-
-                    $query = "INSERT INTO users (userid, password, email) VALUES (?, ?, ?)";
+					
+					
+                    $query = "INSERT INTO users (userid, password, user_type, email) VALUES (?, ?,'s', ?)";
                     $stmt = mysqli_prepare($database, $query);
 
                     mysqli_stmt_bind_param($stmt, "sss", $username, $password, $email);
                     mysqli_stmt_execute($stmt);
-
-                    $query = "INSERT INTO student (student_id, university) VALUES (?, NULL)";
-                    $stmt2 = mysqli_prepare($database, $query);
-                    mysqli_stmt_bind_param($stmt2, "s", $student_id);
-                    mysqli_stmt_execute($stmt2);
-
+					
+					if(!$sAdminCheck){
+						$query = "INSERT INTO student (student_id, university) VALUES (?, ?)";
+						$stmt2 = mysqli_prepare($database, $query);
+						mysqli_stmt_bind_param($stmt2, "si", $username, $university);
+						mysqli_stmt_execute($stmt2);
+					}
+					else
+					{
+						$query = "INSERT INTO super_admin (sadmin_id) VALUES (?)";
+						$stmt3 = mysqli_prepare($database, $query);
+						mysqli_stmt_bind_param($stmt3, "s", $username);
+						mysqli_stmt_execute($stmt3);
+					}
                     $affected_rows = mysqli_stmt_affected_rows($stmt);
                     if ($affected_rows == 1) {
                         mysqli_stmt_close($stmt);
                         mysqli_close($database);
-                        $success = $err."SUCCESS!".$end;;
-                        require_once('index.php');
-                        header($uri.'/registered.html');
+                        $success = $suc."User has been created".$end;
 
                     } else {
                         $success = $err."Username already exists".$end;
@@ -128,7 +167,7 @@
     <!-- Registration Form -->
     <div class="container">
         <!-- Title -->
-        <h2>UNIVERSITY EVENT <p> REGISTRATION</h2>
+        <h2>UCF EVENT REGISTRATION</h2>
         <form class="form-signin" role="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             <?php echo $success; ?>
 
@@ -152,13 +191,28 @@
             <?php echo $emailErr ?>
             <input class="form-control" type="email" name="email" placeholder="Email"
                    required value="<?php echo $email;?>"></br>
-
+			
+			<!-- University -->
+            <?php echo $universityErr ?>
+			<select class="form-control" name="universitySel">
+				<?php
+					for($x = 0; $x <= count($ids); $x++){
+						echo "<option value=" . $ids[$x] . ">" . $name[$x]  . "</option>";
+					}
+				?>
+			</select><br /><br />
+			
+			<!-- Super Admin Check -->
+			<input class="" type="checkbox" name="saCheck" value="superadmin">
+			Super Admin</input><br />
+			
             <!-- Submit Button -->
             <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "login">Register</button>
         </form>
-
+			
         <!-- Login Link -->
         <form class="form-signin" role="form" action="logout.php">
+            <h2 class="form-sigin-heading">Log In:</h2>
             <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "register">Log In</button>
         </form>
     </div>

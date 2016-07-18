@@ -64,21 +64,23 @@
             if (empty($missing_data)) {
                 require_once('connect.php');
 
-                $query = "SELECT userid, email FROM users WHERE userid = '$username' AND password = '$password'";
+                $query = "SELECT * FROM users WHERE userid = '$username' AND password = '$password'";
                 $check_user = mysqli_query($database, $query);
-
+				
                 // USER SUCCESS, START SESSION
                 if(mysqli_num_rows($check_user)>= 1){
+					$row = mysqli_fetch_assoc($check_user);
                     $success = $err."SUCCESS!".$end;
                     $_SESSION['valid'] = true;
                     $_SESSION['timeout'] = time();
                     $_SESSION['username'] = $username;
                     $_SESSION['password'] = $password;
-                    //$_SESSION['email'] = $email;
+                    $_SESSION['email'] = $row['email'];
+                    $_SESSION['user_type'] = $row['user_type'];
 
                     mysqli_close($database);
                     require_once('index.php');
-                    header($uri.'/home.php');
+                    header($uri.'/dashboard.php');
                 } else {
                     $success = $err."Username/Password is incorrect".$end;
                     mysqli_close($database);
@@ -100,7 +102,7 @@
     <!-- Login Form -->
     <div class = "container">
         <!-- Title -->
-        <h2>UNIVERSITY EVENT<p>LOGIN</h2>
+        <h2>UCF EVENT LOGIN</h2>
         <form class = "form-signin" role = "form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             <?php echo $success ?>
             
@@ -115,11 +117,12 @@
                    required value="<?php echo $password;?>"></br>
 
             <!-- Submit Button -->
-            <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "login">Log In</button>
+            <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "login">Login</button>
         </form>
 
         <!-- Registration Link -->
         <form class="form-signin" role="form" action="register.php">
+            <h2 class="form-sigin-heading">Register:</h2>
             <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "register">Register</button>
         </form>
     </div>
