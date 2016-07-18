@@ -27,16 +27,17 @@ DROP TABLE IF EXISTS `university`;
 CREATE TABLE `university` (
   `university_id` int(15) NOT NULL AUTO_INCREMENT,
   `name` varchar(60) NOT NULL,
-  `location` varchar(45) DEFAULT NULL,
+  `location` int(15) DEFAULT NULL,
   `description` varchar(45) DEFAULT NULL,
   `no_students` int(11) DEFAULT NULL,
   `created_by` varchar(24) NOT NULL,
+  `domain` varchar(45) NOT NULL,
   PRIMARY KEY (`university_id`),
   KEY `created_bySA_idx` (`created_by`),
   KEY `loc_U_idx` (`location`),
   CONSTRAINT `created_bySA` FOREIGN KEY (`created_by`) REFERENCES `super_admin` (`sadmin_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `loc_U` FOREIGN KEY (`location`) REFERENCES `location` (`name`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  CONSTRAINT `loc_id` FOREIGN KEY (`location`) REFERENCES `location` (`location_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +46,7 @@ CREATE TABLE `university` (
 
 LOCK TABLES `university` WRITE;
 /*!40000 ALTER TABLE `university` DISABLE KEYS */;
-INSERT INTO `university` VALUES (1,'University of Central Florida',NULL,NULL,NULL,'user1');
+INSERT INTO `university` VALUES (1,'University of Central Florida',NULL,NULL,NULL,'user1','knights.ucf.edu'),(2,'Uni Blah',NULL,NULL,NULL,'user1','blah.blah.edu');
 /*!40000 ALTER TABLE `university` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -58,4 +59,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-17 15:54:52
+-- Dump completed on 2016-07-18 13:16:45

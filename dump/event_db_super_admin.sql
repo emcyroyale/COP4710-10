@@ -37,7 +37,7 @@ CREATE TABLE `super_admin` (
 
 LOCK TABLES `super_admin` WRITE;
 /*!40000 ALTER TABLE `super_admin` DISABLE KEYS */;
-INSERT INTO `super_admin` VALUES ('user1');
+INSERT INTO `super_admin` VALUES ('user1'),('username16');
 /*!40000 ALTER TABLE `super_admin` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -71,4 +71,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-17 15:54:52
+-- Dump completed on 2016-07-18 13:16:46

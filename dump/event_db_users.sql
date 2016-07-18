@@ -28,6 +28,7 @@ CREATE TABLE `users` (
   `userid` varchar(24) NOT NULL,
   `password` varchar(45) NOT NULL,
   `user_type` enum('s','a','sa') NOT NULL,
+  `email` varchar(60) NOT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -38,7 +39,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('u2','p2','a'),('user1','password1','sa');
+INSERT INTO `users` VALUES ('student1','password','s','test@knights.ucf.edu'),('student2','password','s','test@gmail.com'),('u2','p2','a',''),('user1','password1','sa',''),('username16','password1','sa','test@knights.ucf.edu');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-07-17 15:54:51
+-- Dump completed on 2016-07-18 13:16:45
