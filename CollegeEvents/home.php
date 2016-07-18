@@ -16,7 +16,7 @@
             echo "<h2>Welcome, ".$_SESSION["username"]."</h2>";
         ?>
         <!-- Create Event Link -->
-        <form class="form-signin" role="form" action="createEvent.php">
+        <form class="menu-home" role="form" action="createEvent.php">
             <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "register">Create Event</button>
         </form>
     </div>
