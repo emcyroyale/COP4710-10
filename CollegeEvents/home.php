@@ -1,11 +1,5 @@
 <?php
-    ob_start();
-    session_start();
-    if (session_status() == PHP_SESSION_NONE) {
-        require_once('index.php');
-       header($uri . '/index.php');
-    }
-
+    require_once ('check_session.php');
 ?>
 
 <html lang="en">
@@ -17,10 +11,14 @@
 </head>
 <body>
     <div class="container">
-    <h1>WELCOME HOME</h1>
-    <?php
-        echo "<h1>USERNAME: ".$_SESSION["username"]."<br>";
-    ?>
+        <h2>UNIVERSITY EVENTS DASHBOARD</h2>
+        <?php
+            echo "<h2>Welcome, ".$_SESSION["username"]."</h2>";
+        ?>
+        <!-- Create Event Link -->
+        <form class="form-signin" role="form" action="createEvent.php">
+            <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "register">Create Event</button>
+        </form>
     </div>
 </body>
 </html>

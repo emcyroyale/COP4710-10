@@ -11,7 +11,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="College Events Registration">
+    <meta name="description" content="College Events Super-Admin Registration">
     <link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
@@ -93,9 +93,9 @@
                     mysqli_stmt_bind_param($stmt, "sss", $username, $password, $email);
                     mysqli_stmt_execute($stmt);
 
-                    $query = "INSERT INTO student (student_id, university) VALUES (?, NULL)";
+                    $query = "INSERT INTO super_admin (sadmin_id, university) VALUES (?, NULL)";
                     $stmt2 = mysqli_prepare($database, $query);
-                    mysqli_stmt_bind_param($stmt2, "s", $student_id);
+                    mysqli_stmt_bind_param($stmt2, "s", $sadmin_id);
                     mysqli_stmt_execute($stmt2);
 
                     $affected_rows = mysqli_stmt_affected_rows($stmt);
@@ -107,7 +107,7 @@
                         header($uri.'/registered.html');
 
                     } else {
-                        $success = $err."Username already exists".$end;
+                        $success = $err."Super Admin already exists".$end;
                         mysqli_stmt_close($stmt);
                         mysqli_close($database);
                     }
@@ -128,7 +128,7 @@
     <!-- Registration Form -->
     <div class="container">
         <!-- Title -->
-        <h2>UNIVERSITY EVENT <p> REGISTRATION</h2>
+        <h2>SUPER ADMIN REGISTRATION</h2>
         <form class="form-signin" role="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             <?php echo $success; ?>
 
@@ -159,6 +159,7 @@
 
         <!-- Login Link -->
         <form class="form-signin" role="form" action="logout.php">
+            <h2 class="form-sigin-heading">Log In:</h2>
             <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "register">Log In</button>
         </form>
     </div>

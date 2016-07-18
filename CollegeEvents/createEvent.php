@@ -1,26 +1,17 @@
 <?php
-    ob_start();
-
-    //  Start new session if there is none
-    if (session_status() == PHP_SESSION_NONE) {
-        session_start();
-
-    //Otherwise, logout of current session
-    } else {
-        require_once ('index.php');
-        header($uri.'/logout.php');;
-    }
+    require_once ('check_session.php');
 ?>
 
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="College Events Login">
+    <meta name="description" content="Creates a new Event">
     <link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
+
 <body>
-    <div class = "container form-signin">
+    <div class="container form-signin">
         <!-- Process POST data in this HTML page -->
         <?php
         //HTML tags for error messages
@@ -96,32 +87,50 @@
         }
         ?>
     </div>
-    
-    <!-- Login Form -->
+    <!-- Create Events Form -->
     <div class = "container">
-        <!-- Title -->
-        <h2>UNIVERSITY EVENT<p>LOGIN</h2>
+    <h1> CREATE EVENT </h1>
         <form class = "form-signin" role = "form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-            <?php echo $success ?>
-            
-            <!-- Username -->
-            <?php echo $usernameErr ?>
-            <input class="form-control" type="text" name="username" placeholder="Username"
-                   required autofocus value="<?php echo $username;?>"></br>
 
-            <!-- Password -->
-            <?php echo $passwordErr ?>
-            <input class="form-control" type="password" name="password" placeholder="Password"
-                   required value="<?php echo $password;?>"></br>
 
-            <!-- Submit Button -->
-            <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "login">Log In</button>
-        </form>
+        <b class="left" >Name </b>
+        <input class="right" type="text" name="usernameTXT" size=20></input><br />
 
-        <!-- Registration Link -->
-        <form class="form-signin" role="form" action="register.php">
-            <button class = "btn btn-lg btn-primary btn-block" type = "submit" name = "register">Register</button>
-        </form>
-    </div>
+        <b class="left" >Date </b>
+        <input class="right" type="date" name="dateSELECT"></input><br />
+
+        <b class="left" >Time </b>
+        <input class="right" type="time" name="timeSELECT"></input><br />
+
+        <b class="left" >Phone </b>
+        <input class="right" type="text" name="phoneTXT" size=20></input><br /><br />
+
+        <b class="left" >Email </b>
+        <input class="right" type="text" name="emailTXT" size=20></input><br /><br />
+
+        <b class="left" >Description </b>
+        <textarea class="right" col= 200 row=10 name="descTXTAREA"></textarea><br />
+
+        <b class="left" >Type </b>
+        <select class="right"name="typeSELECT">
+            <option value="option1"> Public </option>
+            <option value="option2"> Private </option>
+            <option value="option3"> Registered Student Organization </option>
+        </select><br /><br />
+        <b class="left" >Category </b>
+
+        <select class="right"name="categorySELECT">
+            <option value="option1"> phpPLACEHOLDER1 </option>
+            <option value="option2"> phpPLACEHOLDER2 </option>
+            <option value="option3"> phpPLACEHOLDER3 </option>
+        </select><br /><br />
+        <b class="left" >Location </b>
+        <select class="right"name="locationSELECT">
+            <option value="option1"> phpPLACEHOLDER1 </option>
+            <option value="option2"> phpPLACEHOLDER2 </option>
+            <option value="option3"> phpPLACEHOLDER3 </option>
+        </select><br />
+        <input type="submit" value="Create"></input><br />
+    </form>
 </body>
 </html>
