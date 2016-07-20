@@ -140,3 +140,9 @@ h2{
 	text-align: center;
 	color: #1b4275;
 }
+
+.tblBody {
+	width: 100%;
+	border-width: 100%;
+	text-align: center;
+}

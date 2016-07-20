@@ -22,7 +22,7 @@
 
             //HTML tags for error messages
             $err = "<h4 class=\"error\">";
-            $suc = "<h4 class=\"form-signin-success\">";
+            $suc = "<h4 class=\"form-signin-commentErr\">";
             $end = "</h4>";
 
         // define variables and set to empty values
@@ -90,24 +90,24 @@
                 if (empty($missing_data)) {
                     require_once('connect.php');
 
-                        //  Add New User
-                        $query = "INSERT INTO users (userid, password, email, user_type) VALUES (?, ?, ?, 'sa')";
-                        $stmt = mysqli_prepare($database, $query);
+                    //  Add New User
+                    $query = "INSERT INTO users (userid, password, email, user_type) VALUES (?, ?, ?, 'sa')";
+                    $stmt = mysqli_prepare($database, $query);
 
-                        mysqli_stmt_bind_param($stmt, "sss", $username, $password, $email);
-                        mysqli_stmt_execute($stmt);
+                    mysqli_stmt_bind_param($stmt, "sss", $username, $password, $email);
+                    mysqli_stmt_execute($stmt);
 
-                        // Add Super Admin
-                        $query = "INSERT INTO super_admin (sadmin_id) VALUES (?)";
-                        $stmt3 = mysqli_prepare($database, $query);
-                        mysqli_stmt_bind_param($stmt3, "s", $username);
-                        mysqli_stmt_execute($stmt3);
+                    // Add Super Admin
+                    $query = "INSERT INTO super_admin (sadmin_id) VALUES (?)";
+                    $stmt = mysqli_prepare($database, $query);
+                    mysqli_stmt_bind_param($stmt, "s", $username);
+                    mysqli_stmt_execute($stmt);
 
-                        $affected_rows = mysqli_stmt_affected_rows($stmt);
-                        if ($affected_rows == 1) {
-                            mysqli_stmt_close($stmt);
-                            mysqli_close($database);
-                            $success = $suc."User has been created".$end;;
+                    $affected_rows = mysqli_stmt_affected_rows($stmt);
+                    if ($affected_rows == 1) {
+                        mysqli_stmt_close($stmt);
+                        mysqli_close($database);
+                        $success = $suc."User has been created".$end;;
                         require_once('index.php');
                         header($uri.'/registered.html');
 
@@ -133,7 +133,7 @@
     <!-- Registration Form -->
     <div class="container">
         <!-- Title -->
-        <h2>UNIVERSITY EVENT<p>REGISTRATION</h2>
+        <h2>SUPER ADMIN<p>REGISTRATION</h2>
         <form class="form-signin" role="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             <?php echo $success; ?>
 

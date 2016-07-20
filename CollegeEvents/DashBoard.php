@@ -39,21 +39,21 @@
                         if($_SESSION['user_type']=='s'){ echo "Student Account";}
                         elseif($_SESSION['user_type']=='a'){ echo "Admin Account";}
                         elseif($_SESSION['user_type']=='sa'){ echo "Super Admin Account";}?></b></span><br />
-        <a class="btn btn-xs btn-primary btn-block" href="logout.php" target="_self"> Log Out</a><br />
+        <a class="btn btn-xs btn-primary " href="logout.php" target="_self"> Log Out</a><br />
     </header>
     <nav class="nav">
         <ul>
             <?php
             if($_SESSION['user_type']== 's'){
-                echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"viewEvent.html\" target=\"_self\"> View Events</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.html\" target=\"_self\"> Join RSO</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createRSO.html\" target=\"_self\"> Create RSO</a><br /></b></li>";
+                echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\">Dashboard</a></b></li> 
+									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li> 
+									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
             }
             elseif($_SESSION['user_type']== 'a'){
                 echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createEvent.html\" target=\"_self\"> Create Event</a><br /></b></li>
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.html\" target=\"_self\"> Join RSO</a></b></li>
-									<li><b> <a class = \"btn bt n-mg btn-primary btn-block\" href=\"createRSO.html\" target=\"_self\"> Create RSO</a><br /></b></li>";
+									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createEvent.php\" target=\"_self\"> Create Event</a><br /></b></li>
+									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li>
+									<li><b> <a class = \"btn bt n-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
             }
             elseif($_SESSION['user_type']== 'sa'){
                 echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li> 
@@ -105,9 +105,16 @@
                         }
                         //show
                         else{
+                            $prefix = $suffix = '';
+                            $prefix = "<form class=\"form-signin\" role=\"form\" action=\"viewEvent.php\" method=\"post\">";
+                            //$prefix .= "< target=\"_self\" onClick=\"form.submit();\" name=\"name\" value=\"{$row['name']}\">";
+                            $prefix .= "<button class = \"btn btn-md btn-primary btn-block\" type = \"submit\" 
+                                name=\"eventName\" value=\"{$row3['name']}\">";
+                            $suffix = "</button></form>";
+
                             //echo "else4<br />";
                             echo "<tr>
-											<th>" . $row3['name'] ."</th>
+											<th>" . $prefix . $row3['name']. $suffix . "</th>
 											<th>" . $row3['date'] ."</th>
 											<th>" . $row3['location'] ."</th>
 											<th>" . $row3['description'] ."</th>
