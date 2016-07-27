@@ -12,6 +12,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="College Events Registration">
+	<title>Register SA</title>
     <link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>

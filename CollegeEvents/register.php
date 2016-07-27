@@ -54,19 +54,18 @@
                 } else {
                     $username = trim_input($_POST["username"]);
                     // check if username only contains letters and whitespace
-                    if (!preg_match("/^[a-zA-Z0-9!@#&]{5, 10}$/", $username)){
+                    if (!preg_match("/^[a-zA-Z0-9!@#&]*$/", $username)){
                         $missing_data[] = "username";
                         $usernameErr = $err."Only letters, digits, and {!, @, #, &} characters are allowed.".$end;
                     }
                 }
-
                 if (empty($_POST["password"]))
                 {
                     $missing_data[] = "password";
                     $passwordErr = $err."Password is required".$end;
                 } else {
                     $password = trim_input($_POST["password"]);
-                    if ((!preg_match("/^[a-zA-Z0-9!@#&]{8, 20}$/", $password)){
+                    if (strlen($password) < 6){
                         $missing_data[] = "password";
                         $passwordErr = $err."Must be at least 6 characters long".$end;
                     }
