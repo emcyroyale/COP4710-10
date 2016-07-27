@@ -1,14 +1,12 @@
 <?php
 require_once ('check_session.php');
-
-$curUser = $_SESSION['username'];
 ?>
 
 <html>
 	<head>
 		<meta charset="UTF-8">
 		<meta name="description" content="Creates a new University by a Super Admin">
-			<title>Join RSO</title>
+			<title>Leave RSO</title>
 			<link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 			<link rel="stylesheet" type="text/css" href="styles.css">
 			
@@ -39,7 +37,6 @@ $curUser = $_SESSION['username'];
 				// Check for each required input data that has been POSTed through Request Method
 				if ($_SERVER["REQUEST_METHOD"] == "POST")
 				{
-					require_once('connect.php');
 					if (empty($_POST["rsoSel"]))
 					{
 						$missing_data[] = "RSO";
@@ -48,30 +45,23 @@ $curUser = $_SESSION['username'];
 					else {
 						$rso = trim_input($_POST["rsoSel"]);
 					}
-					
-					$queryDB = "select * from rso,member where student_id = '$curUser' and rso = '$rso' and rso = name ";
-					$result = mysqli_query($database, $queryDB);
-					if(mysqli_num_rows($result) > 0){
-						$missing_data[] = "RSO";
-						$success = $err."You are already part of this RSO".$end;
-					}
-					
 					if (empty($missing_data)) {
+						require_once('connect.php');
 						
 						
-						$query = "INSERT INTO member (student_id, rso) VALUES (?, ?)";
+						$query = "DELETE FROM member WHERE student_id = ? AND rso = ?";
 						$stmt = mysqli_prepare($database, $query);
-						
+
 						mysqli_stmt_bind_param($stmt, "ss", $_SESSION['username'], $rso);
 						mysqli_stmt_execute($stmt);
 						$affected_rows = mysqli_stmt_affected_rows($stmt);
 						if ($affected_rows == 1) {
 							mysqli_stmt_close($stmt);
 							mysqli_close($database);
-							$success = $suc."You've joined an RSO".$end;
+							$success = $suc."You've left an RSO".$end;
 						} 
 						else {
-							$success = $err."You are already part of this RSO - tried".$end;
+							$success = $err."You are not part of this RSO".$end;
 							mysqli_stmt_close($stmt);
 							mysqli_close($database);
 						}
@@ -92,7 +82,7 @@ $curUser = $_SESSION['username'];
 		</div>
 		<div class="flex-container">
 			<header>
-				<h1> JOIN RSO </h1>
+				<h1> LEAVE RSO </h1>
         <span><b><?php echo "Welcome ". $_SESSION['username'] . "<br />";
 				if($_SESSION['user_type']=='s'){ echo "Student Account";}
 				elseif($_SESSION['user_type']=='a'){ echo "Admin Account";}
@@ -134,7 +124,7 @@ $curUser = $_SESSION['username'];
 								}	
 						?>
 						</select>
-						<input class = "btn btn-lg btn-primary btn-block" type="submit" value="Join"></input><br />
+						<input class = "btn btn-lg btn-primary btn-block" type="submit" value="Leave"></input><br />
 					</form>
 				</div>
 			</article>

@@ -6,11 +6,12 @@ body {
 	font-family: 'Open Sans', sans-serif;
 	font-weight: normal;
 	margin: 30px 30px 0;
-	padding-top: 40px;
+	padding-top: 10px;
 	padding-bottom: 40px;
 }
 
 .form-signin {
+	align: left;
 	max-width: 330px;
 	padding: 15px;
 	margin: 0 auto;
@@ -27,7 +28,7 @@ body {
 	font-weight: normal;
 }
 
-.error {
+.form-signin-error {
 	max-width: 100%;
 	padding: 10px;
 	margin: 0 auto;
@@ -43,13 +44,7 @@ body {
 }
 
 .form-signin .form-control {
-	position: relative;
 	height: auto;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-	padding: 10px;
-	font-size: 16px;
 }
 
 .form-signin .form-control:focus {
@@ -81,15 +76,13 @@ a {
 .left {
 	width: 13%;
 	float: left;
-	text-align: right;
 }
 .right {
-	width: 25%;
-	float: left;
 	margin-left: 5px;
 }
 
 .flex-container {
+	border-style: solid;
 	display: -webkit-flex;
 	display: flex;
 	-webkit-flex-flow: row wrap;
@@ -104,6 +97,7 @@ a {
 }
 
 .article {
+	border-style: solid;
 	text-align: left;
 }
 
@@ -131,18 +125,13 @@ tr:nth-child(odd) {background-color: #38618a}
 	color: white;
 }
 
-th, td {
-	padding: 15px;
-	text-align: left;
+th {
+	padding: 10px;
+	text-align: center;
 }
 
-h2{
-	text-align: center;
-	color: #1b4275;
-}
-
-.tblBody {
-	width: 100%;
-	border-width: 100%;
-	text-align: center;
+.solid
+{
+	padding: 10px;
+	border-style: solid;
 }
