@@ -1,19 +1,15 @@
 <?php
+	// Start session
 	ob_start();
 	session_start();
 
-	$uri = 'Location: ';
-	if (!empty($_SERVER['HTTPS']) && ('on' == $_SERVER['HTTPS'])) {
-		$uri .= 'https://';
-	} else {
-		$uri .= 'http://';
-	}
-	$uri .= $_SERVER['HTTP_HOST'];
-	$uri .= '/CollegeEvents';
+	require_once('config.php');
 
+	// Check if the session has an active user and redirect to dashboard
+	// Otherwise redirect to login page
 	if(!isset($_SESSION["username"])){
-		header($uri.'/login.php');
+		header($root_url.'/login.php');
 	} else {
-		header($uri . '/dashboard.php');
+		header($root_url . '/dashboard.php');
 	}
 ?>

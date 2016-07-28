@@ -15,7 +15,10 @@
     <?php
     require_once('connect.php');
     $curUser = $_SESSION['username'];
-    $ismember = $userUni = "";
+    $ismember = $userUni = $appErr = "";
+	$err = "<h4 class=\"form-signin-error\">";
+	$suc = "<h4 class=\"form-signin-success\">";
+	$end = "</h4>";
 
     //Gets users university if applicable
     if($_SESSION['user_type']=='s'){
@@ -23,13 +26,39 @@
         $resultUni1 = mysqli_query($database, $queryUni);
         $row1 = mysqli_fetch_assoc($resultUni1);
         $userUni = $row1['university'];
+		$_SESSION['university'] = $userUni;
     }
     elseif($_SESSION['user_type']=='a'){
         $queryUni = "select * from admin where admin_id = '$curUser'";
         $resultUni2 = mysqli_query($database, $queryUni);
         $row2 = mysqli_fetch_assoc($resultUni2);
         $userUni = $row2['university'];
+		$_SESSION['university'] = $userUni;
     }
+
+	if ($_SERVER["REQUEST_METHOD"] == "POST")
+		{
+			if(!empty($_POST['appEvent'])) {
+				require_once('connect.php');
+				// Add New User
+				$query = "UPDATE event SET App_by_SA = 1 WHERE name = ?";
+				$stmt = mysqli_prepare($database, $query);
+
+				mysqli_stmt_bind_param($stmt, "s", $_POST['appEvent']);
+				mysqli_stmt_execute($stmt);
+
+				$affected_rows = mysqli_stmt_affected_rows($stmt);
+				if ($affected_rows == 1) {
+					mysqli_stmt_close($stmt);
+					$appErr = $suc."Event has been approved".$end;
+
+				} else {
+					$appErr = $err."Event hasn't been approved".$end;
+					mysqli_stmt_close($stmt);
+				}
+			}
+
+		}
     ?>
 </div>
 <div class="flex-container">
@@ -45,26 +74,29 @@
         <ul>
             <?php
             if($_SESSION['user_type']== 's'){
-                echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\">Dashboard</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li> 
+                echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\">Dashboard</a></b></li>
+									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li>
+									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"leaveRSO.php\" target=\"_self\"> Leave RSO</a></b></li>
 									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
             }
             elseif($_SESSION['user_type']== 'a'){
-                echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li> 
+                echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li>
 									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createEvent.php\" target=\"_self\"> Create Event</a><br /></b></li>
 									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li>
 									<li><b> <a class = \"btn bt n-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
             }
             elseif($_SESSION['user_type']== 'sa'){
-                echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li> 
+                echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li>
 									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createuniversity.php\" target=\"_self\"> Create University</a></b></li>";
             }
             ?>
         </ul>
     </nav>
     <article class="article">
-        <table>
-            <tr>
+
+	<?php echo $appErr ?>
+	<table cellpadding="0" cellspacing="0">
+			<tr>
                 <th class="tblHead"> Name </th>
                 <th class="tblHead"> Date </th>
                 <th class="tblHead"> Location </th>
@@ -72,8 +104,18 @@
                 <th class="tblHead"> Phone </th>
                 <th class="tblHead"> Time </th>
                 <th class="tblHead"> Email </th>
-            </tr><br />
-            <div class="tblBody">
+                <th class="tblHead"> Type </th>
+
+				<?php
+					if($_SESSION['user_type']=='sa'){
+						echo "<th class=\"tblHead\"> Approval </th>";
+					}
+
+				?>
+            </tr>
+
+
+			<div>
                 <?php
                 $queryDB = "select * from event";
                 $result = mysqli_query($database, $queryDB);
@@ -90,39 +132,60 @@
                             $ismember = $resultRSO>0;
                         }
                         //--------------------------------------------
+
                         //Public and not approved by super- dont show
-                        if($row3['event_type'] == "Public" && $row3['App_by_SA'] == NULL){
+                        if($_SESSION['user_type']!='sa' && $row3['event_type'] == "Public" && $row3['App_by_SA'] == NULL){
                             //echo "blic1<br />";
                         }
                         //Private and not approved by super OR approved but not user not part of uni- dont show
-                        elseif(($row3['event_type'] == "Private" && $row3['App_by_SA'] == NULL)
-                            ||($row3['event_type'] == "Private" && $row3['App_by_SA'] != NULL && $userUni!=$row3['university_id'])){
+                        elseif(($_SESSION['user_type']!='sa' && $row3['event_type'] == "Private" && $row3['App_by_SA'] == NULL)
+                            ||($_SESSION['user_type']!='sa' && $row3['event_type'] == "Private" && $row3['App_by_SA'] != NULL
+							&& $userUni!=$row3['university'])){
                             //echo "vite2<br />";
                         }
                         //RSO and not part of rso - dont show
-                        elseif($row3['event_type'] == "RSO" && !$ismember){
+                        elseif($_SESSION['user_type']!='sa' && $row3['event_type'] == "RSO" && !$ismember){
                             //echo "mem3<br />";
                         }
                         //show
                         else{
-                            $prefix = $suffix = '';
+                            $prefix = $prefix2 = $suffix = '';
                             $prefix = "<form class=\"form-signin\" role=\"form\" action=\"viewEvent.php\" method=\"post\">";
+                            $prefix2 = "<form class=\"form-signin\" role=\"form\" action=\"\" method=\"post\">";
                             //$prefix .= "< target=\"_self\" onClick=\"form.submit();\" name=\"name\" value=\"{$row['name']}\">";
-                            $prefix .= "<button class = \"btn btn-md btn-primary btn-block\" type = \"submit\" 
+                            $prefix .= "<button class = \"btn btn-md btn-primary btn-block\" type = \"submit\"
                                 name=\"eventName\" value=\"{$row3['name']}\">";
+                            $prefix2 .= "<button class = \"btn btn-md btn-primary btn-block\" type = \"submit\"
+                                name=\"appEvent\" value=\"{$row3['name']}\">";
                             $suffix = "</button></form>";
 
                             //echo "else4<br />";
                             echo "<tr>
-											<th>" . $prefix . $row3['name']. $suffix . "</th>
-											<th>" . $row3['date'] ."</th>
-											<th>" . $row3['location'] ."</th>
-											<th>" . $row3['description'] ."</th>
-											<th>" . $row3['phone'] ."</th>
-											<th>" . $row3['time'] ."</th>
-											<th>" . $row3['email'] ."</th>
-										  </tr><br />
-										 ";
+								<th>" . $prefix . $row3['name']. $suffix . "</th>
+								<th>" . $row3['date'] ."</th>
+								<th>" . $row3['location'] ."</th>
+								<th>" . $row3['description'] ."</th>
+								<th>" . $row3['phone'] ."</th>
+								<th>" . $row3['time'] ."</th>
+								<th>" . $row3['email'] ."</th>
+								<th>" . $row3['event_type'];
+
+								if($row3['event_type'] == "RSO")
+								{
+									echo " : " . $row3['rso_id'];
+								}
+
+							echo "</th>";
+
+							if($_SESSION['user_type']=='sa'){
+								echo "<th>";
+								  if($_SESSION['user_type']=='sa' && $row3['event_type'] != "RSO" && $row3['App_by_SA'] == NULL)
+									{
+										echo $prefix2 . "Approve" . $suffix ;
+									}
+								echo"</th>";
+							}
+							echo "</tr>";
                         }
                     }
                 }

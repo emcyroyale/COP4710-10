@@ -1,10 +1,10 @@
 <?php
+    require_once('config.php');
     ob_start();
 
     //  End current session
     if (session_status() == PHP_SESSION_ACTIVE) {
-        require_once ('index.php');
-        header($uri.'/logout.php');;
+        header($root_url.'/logout.php');;
     }
 ?>
 
@@ -19,13 +19,8 @@
     <div class="container form-sigin">
         <!-- Process POST data in this HTML page -->
         <?php
-
-            //HTML tags for error messages
-            $err = "<h4 class=\"error\">";
-            $suc = "<h4 class=\"form-signin-success\">";
-            $end = "</h4>";
-
-        // define variables and set to empty values
+            require_once('connect.php');
+            // define variables and set to empty values
             $success = $usernameErr = $passwordErr = $passwordErr2 = $emailErr = $universityErr = "";
             $username = $password = $password2 = $email = $test = $university = "";
 
@@ -34,7 +29,6 @@
             // Check Universities
             $name = [];
             $ids = [];
-            require_once('connect.php');
             $queryDB = "SELECT * FROM university";
             $result = mysqli_query($database, $queryDB);
             $test = mysqli_num_rows($result);
@@ -53,10 +47,12 @@
                     $usernameErr = $err."Name is required".$end;
                 } else {
                     $username = trim_input($_POST["username"]);
+                    $usernameErr = "";
+                    require_once('config.php');
                     // check if username only contains letters and whitespace
-                    if (!preg_match("/^[a-zA-Z0-9!@#&]{5, 10}$/", $username)){
+                    if( !preg_match("/^[a-zA-Z0-9!@#&]{4,20}$/", $username) ){
                         $missing_data[] = "username";
-                        $usernameErr = $err."Only letters, digits, and {!, @, #, &} characters are allowed.".$end;
+                        $usernameErr = $errName;
                     }
                 }
 
@@ -66,9 +62,10 @@
                     $passwordErr = $err."Password is required".$end;
                 } else {
                     $password = trim_input($_POST["password"]);
-                    if ((!preg_match("/^[a-zA-Z0-9!@#&]{8, 20}$/", $password)){
+                    $passwordErr = "";
+                    if(!preg_match("/^[a-zA-Z0-9!@#&]{6,20}$/", $password)){
                         $missing_data[] = "password";
-                        $passwordErr = $err."Must be at least 6 characters long".$end;
+                        $passwordErr = $errPW;
                     }
                 }
 
@@ -78,13 +75,15 @@
                     $passwordErr2 = $err."Password is required".$end;
                 } else {
                     $password2 = trim_input($_POST["password2"]);
-                    if (strcmp($password, $password2) != 0) {
+                    $passwordErr2 = "";
+
+                    // Note: "===" is better at comparing strings than strcmp()
+                    if ( !($password === $password2)) {
                         $missing_data[] = "password";
                         $missing_data[] = "password2";
                         $passwordErr2 = $err."Passwords did not match.".$end;
                     }
                 }
-
 
                 if (empty($_POST["email"]))
                 {
@@ -92,6 +91,7 @@
                     $emailErr = $err."Email is required".$end;
                 } else {
                     $email = trim_input($_POST["email"]);
+                    $emailErr = "";
                     if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
                         $missing_data[] = "email";
                         $emailErr = $err."Invalid email format".$end;
@@ -104,13 +104,12 @@
                     $universityErr = $err."University is required".$end;
                 } else {
                     $university = trim_input($_POST["universitySel"]);
+                    $universityErr = "";
                 }
 
                 // If no data is missing and it's been validated
                 // ADD NEW USER TO DATABASE
                 if (empty($missing_data)) {
-                    require_once('connect.php');
-
                     // Add New User
                     $query = "INSERT INTO users (userid, password, email, user_type) VALUES (?, ?, ?, 's')";
                     $stmt = mysqli_prepare($database, $query);
@@ -124,30 +123,30 @@
                     mysqli_stmt_bind_param($stmt2, "si", $username, $university);
                     mysqli_stmt_execute($stmt2);
 
+                    // If SQL insertion was successful redirect user to success page
                     $affected_rows = mysqli_stmt_affected_rows($stmt);
                     if ($affected_rows == 1) {
                         mysqli_stmt_close($stmt);
                         mysqli_close($database);
-                        $success = $suc."User has been created".$end;;
-                        require_once('index.php');
-                        header($uri.'/registered.html');
+                        $success = $suc."User has been created".$end;
+                        header($root_url.'/registered.html');
 
+                    // Insertion Failure, check if its because email was unique
                     } else {
-                        $success = $err."Username already exists".$end;
+                        $query = "SELECT * FROM users WHERE email = '$email'";
+                        $check_email = mysqli_query($database, $query);
+                        if(mysqli_num_rows($check_email)>= 1){
+                            $row = mysqli_fetch_assoc($check_email);
+                            if( $row['email'] === $email )
+                                $success = $err."Email is already in use.".$end;
+                        } else {
+                            $success = $err . "Username already exists" . $end;
+                        }
                         mysqli_stmt_close($stmt);
-                        mysqli_close($database);
                     }
                 }
             }
-
-            //process input data
-            function trim_input($data)
-            {
-                $data = trim($data);
-                $data = stripslashes($data);
-                $data = htmlspecialchars($data);
-                return $data;
-            }
+            mysqli_close($database);
         ?>
     </div>
 
