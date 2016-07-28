@@ -1,14 +1,14 @@
 <?php
     ob_start();
 
+    require_once ('config.php');
     //  Start new session if there is none
     if (session_status() == PHP_SESSION_NONE) {
         session_start();
 
     //Otherwise, logout of current session
     } else {
-        require_once ('index.php');
-        header($uri.'/logout.php');;
+        header($root_url.'/logout.php');;
     }
 ?>
 
@@ -79,33 +79,24 @@
                     $_SESSION['user_type'] = $row['user_type'];
 
                     mysqli_close($database);
-                    require_once('index.php');
-                    header($uri.'/dashboard.php');
+                    require_once('config.php');
+                    header($root_url.'/dashboard.php');
                 } else {
                     $success = $err."Username/Password is incorrect".$end;
                     mysqli_close($database);
                 }
             }
         }
-
-        //process input data
-        function trim_input($data)
-        {
-            $data = trim($data);
-            $data = stripslashes($data);
-            $data = htmlspecialchars($data);
-            return $data;
-        }
         ?>
     </div>
-    
+
     <!-- Login Form -->
     <div class = "container">
         <!-- Title -->
         <h2>UNIVERSITY EVENT<p>LOGIN</h2>
         <form class = "form-signin" role = "form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             <?php echo $success ?>
-            
+
             <!-- Username -->
             <?php echo $usernameErr ?>
             <input class="form-control" type="text" name="username" placeholder="Username"

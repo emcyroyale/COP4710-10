@@ -6,7 +6,7 @@ require_once ('check_session.php');
 	<head>
 		<meta charset="UTF-8">
 		<meta name="description" content="Creates a new University by a Super Admin">
-			<title>Create University</title>
+			<title>Create RSO</title>
 			<link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 			<link rel="stylesheet" type="text/css" href="styles.css">
 			
@@ -119,6 +119,7 @@ require_once ('check_session.php');
 							//echo "Already Admin";
 						}
 						
+					
 						$query = "INSERT INTO rso (name, owned_by) VALUES (?, ?)";
 						$stmt = mysqli_prepare($database, $query);
 						mysqli_stmt_bind_param($stmt, "ss", $rso, $curUser);
@@ -126,14 +127,30 @@ require_once ('check_session.php');
 						$affected_rows = mysqli_stmt_affected_rows($stmt);
 						if ($affected_rows == 1) {
 							mysqli_stmt_close($stmt);
-							mysqli_close($database);
 							$success = $suc."RSO has been created".$end;
 						} 
 						else {
 							$success = $err."RSO already exists".$end;
 							mysqli_stmt_close($stmt);
-							mysqli_close($database);
 						}
+						
+						
+						foreach($users as $uRSO){
+							$query = "INSERT INTO member (student_id, rso) VALUES (?, ?)";
+							$stmt = mysqli_prepare($database, $query);
+							mysqli_stmt_bind_param($stmt, "ss", $uRSO, $rso);
+							mysqli_stmt_execute($stmt);
+							$affected_rows = mysqli_stmt_affected_rows($stmt);
+							if ($affected_rows == 1) {
+								mysqli_stmt_close($stmt);
+							} 
+							else {
+								mysqli_stmt_close($stmt);
+								$nameErr = $err."Member wasn't added".$end;
+							}														
+						}
+						
+							mysqli_close($database);
 						
 					}
 				}
@@ -161,21 +178,22 @@ require_once ('check_session.php');
 			<nav class="nav">
 				<ul>
 					<?php
-					if($_SESSION['user_type']== 's'){
-						echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\">Dashboard</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
-					}
-					elseif($_SESSION['user_type']== 'a'){
-						echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createEvent.php\" target=\"_self\"> Create Event</a><br /></b></li>
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li>
-									<li><b> <a class = \"btn bt n-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
-					}
-					elseif($_SESSION['user_type']== 'sa'){
-						echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createuniversity.php\" target=\"_self\"> Create University</a></b></li>";
-					}
+						if($_SESSION['user_type']== 's'){
+							echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\">Dashboard</a></b></li> 
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li>
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"leaveRSO.php\" target=\"_self\"> Leave RSO</a></b></li>  
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
+						}
+						elseif($_SESSION['user_type']== 'a'){
+							echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li> 
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createEvent.php\" target=\"_self\"> Create Event</a><br /></b></li>
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li>
+												<li><b> <a class = \"btn bt n-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
+						}
+						elseif($_SESSION['user_type']== 'sa'){
+							echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li> 
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createuniversity.php\" target=\"_self\"> Create University</a></b></li>";
+						}
 					?>
 				</ul>
 			</nav>

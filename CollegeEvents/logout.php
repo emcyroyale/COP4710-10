@@ -7,6 +7,6 @@
     if(isset($_SESSION["username"])){
         unset($_SESSION["username"]);
     }
-    require_once ("index.php");
-    header($uri.'/login.php');
+    require_once ("config.php");
+    header($root_url.'/login.php');
 ?>

@@ -1,4 +1,5 @@
 <?php
+require_once('config.php');
 require_once ('check_session.php');
 ?>
 <html>
@@ -8,17 +9,17 @@ require_once ('check_session.php');
 			<title>Create University</title>
 			<link rel = "stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 			<link rel="stylesheet" type="text/css" href="styles.css">
-			
+
 	</head>
-	
+
 	<body>
 		<?php
 			//HTML tags for error messages
 			$err = "<h4 class=\"form-signin-error\">";
 			$suc = "<h4 class=\"form-signin-success\">";
 			$end = "</h4>";
-			$success = $uname = $location = $descV = "";
-			$nameErr = $locationErr = "";
+			$success = $uname = $location = $descV = $selectLoc = "";
+			$nameErr = $locErr = $posErr = "";
 			$missing_data = [];
 			$name = [];
 			$ids = [];
@@ -29,7 +30,6 @@ require_once ('check_session.php');
 			$result = mysqli_query($database, $queryDB);
 			if(mysqli_num_rows($result) > 0){
 					while($row = mysqli_fetch_assoc($result)){
-						array_push($ids,$row['location_id']);
 						array_push($name,$row['name']);
 					}
 			}
@@ -48,13 +48,25 @@ require_once ('check_session.php');
 						$nameErr = $err."Only letters, digits, and {!, @, #, &} characters are allowed.".$end;
 					}
 				}
-				if (empty($_POST["locSel"]))
+					// Creating overrides selecting a location
+				if (empty($_POST["locnameTXT"]))
 				{
-					$missing_data[] = "location";
-					$locationErr = $err."Location is required".$end;
+					if (empty($_POST["locSel"]))
+					{
+						$missing_data[] = "Location";
+						$locErr = $err."Location is required".$end;
+					}
+					else {
+						$selectLoc = trim_input($_POST["locSel"]);
+					}
 				}
-				else {
-					$location = trim_input($_POST["locSel"]);
+				else
+				{
+					if (empty($_POST["latTXT"]) || empty($_POST["longTXT"]))
+					{
+						$missing_data[] = "Position";
+						$posErr = $err."Position is required for location creation".$end;
+					}
 				}
 
 				if (!empty($_POST["descTA"]))
@@ -63,21 +75,18 @@ require_once ('check_session.php');
 				}
 
 				if (empty($missing_data)) {
-					require_once('connect.php');
-
-
-					$query = "INSERT INTO university (name, location, description,created_by) VALUES (?, ?, ?, ?)";
+					$query = "INSERT INTO university (name, description, no_students, created_by)
+								VALUES (?, ?, ?, ?)";
 					$stmt = mysqli_prepare($database, $query);
 
-					mysqli_stmt_bind_param($stmt, "siss", $uname, $locSel, $descV, $_SESSION['username']);
+					mysqli_stmt_bind_param($stmt, "ssss", $uname, $descV, $_POST["nostuTXT"], $_SESSION['username']);
 					mysqli_stmt_execute($stmt);
 					$affected_rows = mysqli_stmt_affected_rows($stmt);
 					if ($affected_rows == 1) {
-						mysqli_stmt_close($stmt);
 						mysqli_close($database);
+						mysqli_stmt_close($stmt);
 						$success = $suc."University has been created".$end;
-					}
-					else {
+					} else {
 						$success = $err."University already exists".$end;
 						mysqli_stmt_close($stmt);
 						mysqli_close($database);
@@ -86,15 +95,6 @@ require_once ('check_session.php');
 				}
 			}
 
-
-			//process input data
-			function trim_input($data)
-			{
-				$data = trim($data);
-				$data = stripslashes($data);
-				$data = htmlspecialchars($data);
-				return $data;
-			}
 		?>
 		<div class="flex-container">
 			<header>
@@ -108,21 +108,22 @@ require_once ('check_session.php');
 			<nav class="nav">
 				<ul>
 					<?php
-					if($_SESSION['user_type']== 's'){
-						echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\">Dashboard</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
-					}
-					elseif($_SESSION['user_type']== 'a'){
-						echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createEvent.php\" target=\"_self\"> Create Event</a><br /></b></li>
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li>
-									<li><b> <a class = \"btn bt n-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
-					}
-					elseif($_SESSION['user_type']== 'sa'){
-						echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li> 
-									<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createuniversity.php\" target=\"_self\"> Create University</a></b></li>";
-					}
+						if($_SESSION['user_type']== 's'){
+							echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\">Dashboard</a></b></li>
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li>
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"leaveRSO.php\" target=\"_self\"> Leave RSO</a></b></li>
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
+						}
+						elseif($_SESSION['user_type']== 'a'){
+							echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li>
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createEvent.php\" target=\"_self\"> Create Event</a><br /></b></li>
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"joinRSO.php\" target=\"_self\"> Join RSO</a></b></li>
+												<li><b> <a class = \"btn bt n-mg btn-primary btn-block\" href=\"createRSO.php\" target=\"_self\"> Create RSO</a><br /></b></li>";
+						}
+						elseif($_SESSION['user_type']== 'sa'){
+							echo " 	<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"dashboard.php\" target=\"_self\"> Dashboard</a></b></li>
+												<li><b> <a class = \"btn btn-mg btn-primary btn-block\" href=\"createuniversity.php\" target=\"_self\"> Create University</a></b></li>";
+						}
 					?>
 				</ul>
 			</nav>
@@ -132,22 +133,31 @@ require_once ('check_session.php');
 					<b  >Name </b>
 					<?php echo $nameErr ?>
 					<input  class="form-control" type="text" name="nameTXT" size=20></input><br />
-					<b  >Location </b>
-					<?php echo $locationErr ?>
-					<select class="form-control" name="locSel">
-					<?php
-							for($x = 0; $x <= count($ids); $x++){
-								echo "<option value=" . $ids[$x] . ">" . $name[$x]  . "</option>";
-							}
-					?>
-					</select><br />
+					<b  >No Students </b>
+					<input  class="form-control" type="text" name="nostuTXT" size=20></input><br />
 					<b  >Description </b>
-					<textarea  class="form-control" col= 200 row=10 name="descTA"></textarea><br /><br />
+					<textarea  class="form-control" col= 200 row=10 name="descTA"></textarea><br />
+					<div class="solid">
+						<b  >Location </b>
+						<?php echo $locErr?>
+						<select class="form-control" name="locSel">
+							<?php
+							for($x = 0; $x <= count($name); $x++){
+								echo "<option value=" . $name[$x] . ">" . $name[$x]  . "</option>";
+							}
+							?>
+						</select><br />
+					</div>
 					<input class = "btn btn-lg btn-primary btn-block" type="submit" value="Create"></input><br />
 				</form>
-
+				<b> Didn't find a location you had in mind? </b><br /><br />
+				<!-- GO TO CREATE LOCATION -->
+				<!-- Add New Location -->
+				<form action="createloc.php" method="post">
+					<input class = "btn btn-lg btn-primary btn-block" type="submit" name="submit" value="Add New Location"><br />
+				</form>
 			</article>
 		<div>
 	</body>
-	
+
 </html>
